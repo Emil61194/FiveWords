@@ -40,12 +40,12 @@ namespace FiveWords
 
             FindCombinations(data, new List<string>(), new HashSet<char>(), 0, combinations);
 
-            Console.WriteLine(combinations.Count());
-
             foreach (var combination in combinations)
             {
                 Console.WriteLine(string.Join(" ", combination));
             }
+
+            Console.WriteLine(combinations.Count());
         }
 
         private void FindCombinations(string[] data, List<string> combination, HashSet<char> usedChars, int start, List<List<string>> combinations)
@@ -60,7 +60,21 @@ namespace FiveWords
             {
                 string word = data[i];
 
-                if (word.Any(c => usedChars.Contains(c)))
+                //if (word.Any(c => usedChars.Contains(c)))
+                //{
+                //    continue;
+                //}
+
+                bool skipWord = false;
+                foreach(char c in word.ToCharArray())
+                {
+                    if (usedChars.Contains(c))
+                    {
+                        skipWord = true;
+                        break;
+                    }
+                }
+                if (skipWord) 
                 {
                     continue;
                 }
