@@ -33,12 +33,29 @@ namespace FiveWords
             return results.ToArray();
         }
 
-
-        public void GetCombinations(string[] data)
+        public List<uint> DataToUint(string[] data)
         {
-            List<List<string>> combinations = new List<List<string>>();
+            List<uint> result = new List<uint>();
 
-            FindCombinations(data, new List<string>(), new HashSet<char>(), 0, combinations);
+            foreach (string word in data)
+            {
+                uint mask = 0;
+
+                foreach (char c in word)
+                {
+                    mask |= 1u << (c - 'a');
+                }
+
+                result.Add(mask);
+            }
+
+            return result;
+        }
+        public void GetCombinations(List<uint> data)
+        {
+            List<List<uint>> combinations = new List<List<uint>>();
+
+            FindCombinations(data, new List<uint>(), new uint(), combinations, 0);
 
             foreach (var combination in combinations)
             {
@@ -48,52 +65,30 @@ namespace FiveWords
             Console.WriteLine(combinations.Count());
         }
 
-        private void FindCombinations(string[] data, List<string> combination, HashSet<char> usedChars, int start, List<List<string>> combinations)
+        private void FindCombinations(List<uint> data, List<uint> combination, uint wordMask, List<List<uint>> combinations, int start)
         {
-            if (combination.Count == 5)
+            if (combination.Count() == 5)
             {
-                combinations.Add(new List<string>(combination));
+                combinations.Add(new List<uint>(combination));
+                Console.WriteLine(combinations.Count());
                 return;
             }
 
-            for (int i = start; i < data.Length; i++)
+            for (int i = start; i < data.Count(); i++)
             {
-                string word = data[i];
+                uint word = data[i];
 
-                //if (word.Any(c => usedChars.Contains(c)))
-                //{
-                //    continue;
-                //}
-
-                bool skipWord = false;
-                foreach(char c in word.ToCharArray())
-                {
-                    if (usedChars.Contains(c))
-                    {
-                        skipWord = true;
-                        break;
-                    }
-                }
-                if (skipWord) 
+                if((word & wordMask) != 0)
                 {
                     continue;
                 }
 
                 combination.Add(word);
+                uint newMask = wordMask | word;
 
-                foreach (char c in word)
-                {
-                    usedChars.Add(c);
-                }
+                FindCombinations(data, combination, newMask, combinations, i + 1);
 
-                FindCombinations(data, combination, usedChars, i + 1, combinations);
-
-                combination.RemoveAt(combination.Count - 1);
-
-                foreach (char c in word)
-                {
-                    usedChars.Remove(c);
-                }
+                combination.RemoveAt(combination.Count() - 1);
             }
         }
     }
