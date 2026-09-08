@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -56,21 +57,14 @@ namespace FiveWords
             List<List<uint>> combinations = new List<List<uint>>();
 
             FindCombinations(data, new List<uint>(), new uint(), combinations, 0);
-
-            foreach (var combination in combinations)
-            {
-                Console.WriteLine(string.Join(" ", combination));
-            }
-
             Console.WriteLine(combinations.Count());
         }
 
         private void FindCombinations(List<uint> data, List<uint> combination, uint wordMask, List<List<uint>> combinations, int start)
         {
-            if (combination.Count() == 5)
+            if (combination.Count == 5)
             {
-                combinations.Add(new List<uint>(combination));
-                Console.WriteLine(combinations.Count());
+                combinations.Add(combination);
                 return;
             }
 
@@ -84,11 +78,9 @@ namespace FiveWords
                 }
 
                 combination.Add(word);
-                uint newMask = wordMask | word;
+                FindCombinations(data, combination, wordMask | word, combinations, i + 1);
 
-                FindCombinations(data, combination, newMask, combinations, i + 1);
-
-                combination.RemoveAt(combination.Count() - 1);
+                combination.RemoveAt(combination.Count - 1);
             }
         }
     }
