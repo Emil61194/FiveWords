@@ -54,21 +54,22 @@ namespace FiveWords
         }
         public void GetCombinations(List<uint> data)
         {
-            List<List<uint>> combinations = new List<List<uint>>();
-
-            FindCombinations(data, new List<uint>(), new uint(), combinations, 0);
-            Console.WriteLine(combinations.Count());
+            int combinations = 0;
+            FindCombinations(data.ToArray(), 0, new uint(), ref combinations, 0);
+            Console.WriteLine("Total combinations: "+combinations);
         }
 
-        private void FindCombinations(List<uint> data, List<uint> combination, uint wordMask, List<List<uint>> combinations, int start)
+        private void FindCombinations(uint[] data, int combinationCount, uint wordMask, ref int combinations, int start)
         {
-            if (combination.Count == 5)
+
+            if (combinationCount == 5)
             {
-                combinations.Add(combination);
+                combinations += 1;
+                //Console.WriteLine(combinations);
                 return;
             }
 
-            for (int i = start; i < data.Count(); i++)
+            for (int i = start; i < data.Length; i++)
             {
                 uint word = data[i];
 
@@ -77,10 +78,9 @@ namespace FiveWords
                     continue;
                 }
 
-                combination.Add(word);
-                FindCombinations(data, combination, wordMask | word, combinations, i + 1);
-
-                combination.RemoveAt(combination.Count - 1);
+                combinationCount += 1;
+                FindCombinations(data, combinationCount, wordMask | word, ref combinations, i + 1);
+                combinationCount -= 1;
             }
         }
     }
