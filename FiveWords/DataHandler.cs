@@ -84,28 +84,30 @@ namespace FiveWords
             if (combinationCount == 5)
             {
                 combinations += 1;
-                //Console.WriteLine(combinations);
+                Console.WriteLine(combinations);
                 return;
             }
 
-            for (int i = startIndex; i < data.Count; i++)
+            int i = startIndex;
+            foreach(KeyValuePair<uint, List<uint>> kvp in data.Skip(startIndex))
             {
-                KeyValuePair<uint, List<uint>> kvp = data.ElementAt(i);
                 if ((kvp.Key & wordMask) == 0)
                 {
-                    for (int ii = listIndex; ii < kvp.Value.Count; ii++)
+                    int ii = listIndex;
+                    foreach(uint word in kvp.Value.Skip(listIndex))
                     {
-                        uint word = kvp.Value.ElementAt(ii);
+                        listIndex += 1;
                         if ((word & wordMask) != 0)
                         {
                             continue;
                         }
                         combinationCount += 1;
-                        FindCombinations(data, combinationCount, wordMask | word, ref combinations, i, ii + 1);
+                        FindCombinations(data, combinationCount, wordMask | word, ref combinations, i, listIndex + 1);
                         combinationCount -= 1;
                     }
                 }
                 listIndex = 0;
+                i++;
             }
         }
     }
