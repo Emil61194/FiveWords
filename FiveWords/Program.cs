@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Specialized;
+using System.Diagnostics;
 
 namespace FiveWords
 {
@@ -15,7 +16,7 @@ namespace FiveWords
             string[] data = dh.GetData("C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_alpha.txt");
             data = dh.KeepOnlyFiveLetterWords(data);
             data = dh.FilterRepeatingCharsInSameWord(data);
-            Dictionary<uint, List<uint>> newData = dh.DataToUint(data);
+            Dictionary<uint, uint[]> newData = dh.DataToUint(data);
             dh.GetCombinations(newData);
 
             sw.Stop();
