@@ -87,11 +87,11 @@ namespace FiveWords
         public void GetCombinations(Dictionary<uint, uint[]> data)
         {
             int combinations = 0;
-            FindCombinations(data, 0, new uint(), ref combinations, 0, 0);
+            FindCombinations(data.ToArray(), 0, new uint(), ref combinations, 0, 0);
             Console.WriteLine("Total combinations: " + combinations);
         }
 
-        private void FindCombinations(Dictionary<uint, uint[]> data, int combinationCount, uint wordMask, ref int combinations, int startIndex, int listIndex)
+        private void FindCombinations(KeyValuePair<uint, uint[]>[] data, int combinationCount, uint wordMask, ref int combinations, int startIndex, int listIndex)
         {
 
             if (combinationCount == 5)
@@ -101,9 +101,9 @@ namespace FiveWords
                 return;
             }
 
-            int i = startIndex;
-            foreach (KeyValuePair<uint, uint[]> kvp in data.Skip(startIndex))
+            for (int i = startIndex; i < data.Length; i++)
             {
+                KeyValuePair<uint, uint[]> kvp = data[i];
                 if ((kvp.Key & wordMask) == 0)
                 {
                     int ii = listIndex;
@@ -120,7 +120,6 @@ namespace FiveWords
                     }
                 }
                 listIndex = 0;
-                i++;
             }
         }
     }
