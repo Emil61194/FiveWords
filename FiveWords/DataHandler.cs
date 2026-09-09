@@ -34,32 +34,51 @@ namespace FiveWords
             return results.ToArray();
         }
 
-        public List<uint> DataToUint(string[] data)
+        public Dictionary<uint, List<uint>> GetDataTemplate()
         {
-            List<uint> result = new List<uint>();
+            Dictionary<uint, List<uint>> data = new Dictionary<uint, List<uint>>();
+            string supportedLetters = "qwertyuiopasdfghjklzxcvbnm";
+            foreach(char c in supportedLetters)
+            {
+                uint mask = 0;
+                data.Add(mask |= 1u << (c - 'a'), new List<uint>());
+            }
+            return data;
+        }
+        public Dictionary<uint, List<uint>> DataToUint(string[] data)
+        {
+            Dictionary<uint, List<uint>> result = GetDataTemplate();
 
             foreach (string word in data)
             {
                 uint mask = 0;
+
+                uint firstLetterMask = 0;
+                char firstLetter = word[0];
+                firstLetterMask |= 1u << (firstLetter - 'a');
+                if (!result.ContainsKey(firstLetterMask))
+                {
+                    continue;
+                }
 
                 foreach (char c in word)
                 {
                     mask |= 1u << (c - 'a');
                 }
 
-                result.Add(mask);
+                result[firstLetterMask].Add(mask);
             }
 
             return result;
         }
-        public void GetCombinations(List<uint> data)
+        public void GetCombinations(Dictionary<uint, List<uint>> data)
         {
             int combinations = 0;
-            FindCombinations(data.ToArray(), 0, new uint(), ref combinations, 0);
+            FindCombinations(data, 0, new uint(), ref combinations, 0, 0);
             Console.WriteLine("Total combinations: "+combinations);
         }
 
-        private void FindCombinations(uint[] data, int combinationCount, uint wordMask, ref int combinations, int start)
+        private void FindCombinations(Dictionary<uint, List<uint>> data, int combinationCount, uint wordMask, ref int combinations, int startIndex, int listIndex)
         {
 
             if (combinationCount == 5)
@@ -69,18 +88,24 @@ namespace FiveWords
                 return;
             }
 
-            for (int i = start; i < data.Length; i++)
+            for (int i = startIndex; i < data.Count; i++)
             {
-                uint word = data[i];
-
-                if((word & wordMask) != 0)
+                KeyValuePair<uint, List<uint>> kvp = data.ElementAt(i);
+                if ((kvp.Key & wordMask) == 0)
                 {
-                    continue;
+                    for (int ii = listIndex; ii < kvp.Value.Count; ii++)
+                    {
+                        uint word = kvp.Value.ElementAt(ii);
+                        if ((word & wordMask) != 0)
+                        {
+                            continue;
+                        }
+                        combinationCount += 1;
+                        FindCombinations(data, combinationCount, wordMask | word, ref combinations, i, ii + 1);
+                        combinationCount -= 1;
+                    }
                 }
-
-                combinationCount += 1;
-                FindCombinations(data, combinationCount, wordMask | word, ref combinations, i + 1);
-                combinationCount -= 1;
+                listIndex = 0;
             }
         }
     }
