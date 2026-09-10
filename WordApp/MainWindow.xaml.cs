@@ -26,8 +26,8 @@ namespace WordApp
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Executor executor = new Executor();
-            executor.Run(FileLabel.Content?.ToString() ?? "", 5, true);
+            Executor executor = new Executor(this);
+            executor.Run();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

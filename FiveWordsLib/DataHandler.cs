@@ -12,6 +12,11 @@ namespace FiveWords
     {
         private string[] GetData(string filePath)
         {
+            if (!File.Exists(filePath)) 
+            {
+                return new string[0];
+            }
+
             string[] data = File.ReadAllLines(filePath);
             return data;
         }
