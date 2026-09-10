@@ -98,6 +98,7 @@ namespace FiveWords
             {
                 //combinations += 1;
                 combinations.Add(combination.ToList());
+                Console.WriteLine(combinations.Count);
                 return;
             }
 
