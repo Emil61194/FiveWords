@@ -27,30 +27,61 @@ namespace WordApp
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            Executor executor = new Executor();
+            ThreadRun.IsEnabled = false;
+            try
+            {
+                Executor executor = new Executor();
 
-            string filePath = FileLabel.Content?.ToString() ?? "";
-            string wordLength = WordLength.Text;
-            bool onlyUnique = OnlyUnique.IsChecked ?? true;
-            RunResult runResult = await Task.Run(() => executor.Run(filePath, wordLength, onlyUnique));
-            executor.ClearResultsOnScreen(this);
-            executor.SetResultOnScreen(this, runResult);
+                string filePath = FileLabel.Content?.ToString() ?? "";
+                string wordLength = WordLength.Text;
+                bool onlyUnique = OnlyUnique.IsChecked ?? true;
+                RunResult runResult = await Task.Run(() => executor.Run(filePath, wordLength, onlyUnique));
+                executor.ClearResultsOnScreen(this);
+                executor.SetResultOnScreen(this, runResult);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                ThreadRun.IsEnabled = true;
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            if (ofd.ShowDialog() == true)
+            try
             {
-                FileLabel.Content = ofd.FileName;
+                OpenFileDialog ofd = new OpenFileDialog();
+                if (ofd.ShowDialog() == true)
+                {
+                    FileLabel.Content = ofd.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            Executor executor = new Executor();
-            executor.ClearResultsOnScreen(this);
-            RunResult runResult = executor.Run(FileLabel.Content?.ToString() ?? "", WordLength.Text, OnlyUnique.IsChecked ?? true);
-            executor.SetResultOnScreen(this, runResult);
+            NoThreadRun.IsEnabled = false;
+            try
+            {
+                Executor executor = new Executor();
+                executor.ClearResultsOnScreen(this);
+                RunResult runResult = executor.Run(FileLabel.Content?.ToString() ?? "", WordLength.Text, OnlyUnique.IsChecked ?? true);
+                executor.SetResultOnScreen(this, runResult);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                NoThreadRun.IsEnabled = true;
+            }
         }
     }
 }
