@@ -8,19 +8,10 @@ namespace WordApp
 {
     public class Executor
     {
-        private MainWindow mainWindow;
-        public Executor(MainWindow mainWindow) 
+        public RunResult Run(string filePath, string wordLengthStr, bool onlyUnique)
         {
-            this.mainWindow = mainWindow;
-        }
-        public void Run()
-        {
-            string filePath = mainWindow.FileLabel.Content?.ToString() ?? "";
             int wordLength = 0;
-            int.TryParse(mainWindow.WordLength.Text, out wordLength);
-            bool onlyUnique = mainWindow.OnlyUnique.IsChecked ?? true;
-
-            mainWindow.CombinationList.Items.Clear();
+            int.TryParse(wordLengthStr, out wordLength);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -31,10 +22,21 @@ namespace WordApp
             sw.Stop();
             TimeSpan timeSpan = sw.Elapsed;
 
-            mainWindow.Runtime.Content = $"Runtime: {timeSpan.ToString(@"hh\:mm\:ss\:fff")}";
-            mainWindow.Combination.Content = $"Combinations: {combinations.Count}";
+            return new RunResult { elapsed = timeSpan, combinations = combinations};
+        }
 
-            foreach (List<string> list in combinations)
+        public void ClearResultsOnScreen(MainWindow mainWindow)
+        {
+            mainWindow.Runtime.Content = "Runtime: ";
+            mainWindow.Combination.Content = $"Combinations: ";
+            mainWindow.CombinationList.Items.Clear();
+        }
+        public void SetResultOnScreen(MainWindow mainWindow, RunResult runResult)
+        {
+            mainWindow.Runtime.Content = $"Runtime: {runResult.elapsed.ToString(@"hh\:mm\:ss\:fff")}";
+            mainWindow.Combination.Content = $"Combinations: {runResult.combinations.Count}";
+
+            foreach (List<string> list in runResult.combinations)
             {
                 string combination = "";
                 foreach (string word in list)

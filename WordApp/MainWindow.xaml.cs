@@ -1,5 +1,6 @@
 ﻿using FiveWords;
 using Microsoft.Win32;
+using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -24,10 +25,16 @@ namespace WordApp
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            Executor executor = new Executor(this);
-            executor.Run();
+            Executor executor = new Executor();
+
+            string filePath = FileLabel.Content?.ToString() ?? "";
+            string wordLength = WordLength.Text;
+            bool onlyUnique = OnlyUnique.IsChecked ?? true;
+            RunResult runResult = await Task.Run(() => executor.Run(filePath, wordLength, onlyUnique));
+            executor.ClearResultsOnScreen(this);
+            executor.SetResultOnScreen(this, runResult);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -37,6 +44,13 @@ namespace WordApp
             {
                 FileLabel.Content = ofd.FileName;
             }
+        }
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            Executor executor = new Executor();
+            executor.ClearResultsOnScreen(this);
+            RunResult runResult = executor.Run(FileLabel.Content?.ToString() ?? "", WordLength.Text, OnlyUnique.IsChecked ?? true);
+            executor.SetResultOnScreen(this, runResult);
         }
     }
 }
