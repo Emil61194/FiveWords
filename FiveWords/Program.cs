@@ -11,13 +11,13 @@ namespace FiveWords
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            DataHandler dh = new DataHandler();
-            string[] data = dh.GetData("C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_beta.txt");
-            //string[] data = dh.GetData("C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_alpha.txt");
-            data = dh.KeepOnlyFiveLetterWords(data);
-            data = dh.FilterRepeatingCharsInSameWord(data);
-            MaskValues[] newData = dh.DataToUint(data);
-            List<List<string>>  combinations = dh.GetCombinations(newData);
+            string filePath = "";
+            int wordLength = 5;
+            bool onlyUniques = true;
+            filePath = "C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_beta.txt";
+
+            DataHandler dh = new DataHandler();           
+            List<List<string>>  combinations = dh.GetCombinations(filePath, wordLength, onlyUniques);
             sw.Stop();
             TimeSpan timeSpan = sw.Elapsed;
 

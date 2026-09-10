@@ -10,18 +10,18 @@ namespace FiveWords
 {
     public class DataHandler
     {
-        public string[] GetData(string filePath)
+        private string[] GetData(string filePath)
         {
             string[] data = File.ReadAllLines(filePath);
             return data;
         }
 
-        public string[] KeepOnlyFiveLetterWords(string[] data)
+        private string[] KeepWordsWithSpecificLength(string[] data, int wordLength)
         {
-            return data.Where(x => x.Length == 5).ToArray();
+            return data.Where(x => x.Length == wordLength).ToArray();
         }
 
-        public string[] FilterRepeatingCharsInSameWord(string[] data)
+        private string[] FilterRepeatingCharsInSameWord(string[] data)
         {
             List<string> results = new List<string>();
 
@@ -36,7 +36,7 @@ namespace FiveWords
             return results.ToArray();
         }
 
-        public Dictionary<uint, List<UnmaskedValue>> GetDataTemplate()
+        private Dictionary<uint, List<UnmaskedValue>> GetDataTemplate()
         {
             Dictionary<uint, List<UnmaskedValue>> data = new Dictionary<uint, List<UnmaskedValue>> ();
             string supportedLetters = "qwertyuiopasdfghjklzxcvbnm";
@@ -47,7 +47,7 @@ namespace FiveWords
             }
             return data;
         }
-        public MaskValues[] DataToUint(string[] data)
+        private MaskValues[] DataToUint(string[] data, bool onlyUniques)
         {
             Dictionary<uint, List<UnmaskedValue>> convertedData = GetDataTemplate();
             HashSet<uint> uniqueMasks = new HashSet<uint>();
@@ -69,7 +69,7 @@ namespace FiveWords
 
                     mask |= 1u << (c - 'a');
                 }
-                if (uniqueMasks.Add(mask))
+                if (onlyUniques && uniqueMasks.Add(mask))
                 {
                     convertedData[firstLetterMask].Add(new UnmaskedValue { mask = mask, unmask = word});
                 }
@@ -84,10 +84,15 @@ namespace FiveWords
 
             return maskValues.ToArray();
         }
-        public List<List<string>> GetCombinations(MaskValues[] data)
+        public List<List<string>> GetCombinations(string filePath, int wordLength, bool onlyUniques)
         {
+            string[] data = GetData(filePath);
+            data = KeepWordsWithSpecificLength(data, wordLength);
+            data = FilterRepeatingCharsInSameWord(data);
+            MaskValues[] newData = DataToUint(data, onlyUniques);
+
             List<List<UnmaskedValue>> combinations = new List<List<UnmaskedValue>>();
-            FindCombinations(data, new List<UnmaskedValue>(), new uint(), ref combinations, 0, 0);
+            FindCombinations(newData, new List<UnmaskedValue>(), new uint(), ref combinations, 0, 0);
             
             List<List<string>> refinedCombinations = new List<List<string>>();
             foreach (List<UnmaskedValue> list in combinations)
