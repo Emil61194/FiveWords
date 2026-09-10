@@ -74,7 +74,7 @@ namespace FiveWords
 
                     mask |= 1u << (c - 'a');
                 }
-                if (onlyUniques && uniqueMasks.Add(mask))
+                if (onlyUniques == false || uniqueMasks.Add(mask))
                 {
                     convertedData[firstLetterMask].Add(new UnmaskedValue { mask = mask, unmask = word});
                 }

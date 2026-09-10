@@ -20,6 +20,8 @@ namespace WordApp
             int.TryParse(mainWindow.WordLength.Text, out wordLength);
             bool onlyUnique = mainWindow.OnlyUnique.IsChecked ?? true;
 
+            mainWindow.CombinationList.Items.Clear();
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
