@@ -8,7 +8,7 @@ namespace WordApp
 {
     public class Executor
     {
-        public RunResult Run(string filePath, string wordLengthStr, bool onlyUnique)
+        public RunResult Run(string filePath, string wordLengthStr, bool onlyUnique, int combinationLength)
         {
             int wordLength = 0;
             int.TryParse(wordLengthStr, out wordLength);
@@ -17,7 +17,7 @@ namespace WordApp
             sw.Start();
 
             DataHandler dh = new DataHandler();
-            List<List<string>> combinations = dh.GetCombinations(filePath, wordLength, onlyUnique);
+            List<List<string>> combinations = dh.GetCombinations(filePath, wordLength, onlyUnique, combinationLength);
 
             sw.Stop();
             TimeSpan timeSpan = sw.Elapsed;

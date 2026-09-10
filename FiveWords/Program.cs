@@ -18,7 +18,7 @@ namespace FiveWords
             //filePath = "C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_alpha.txt";
 
             DataHandler dh = new DataHandler();           
-            List<List<string>>  combinations = dh.GetCombinations(filePath, wordLength, onlyUniques);
+            List<List<string>>  combinations = dh.GetCombinations(filePath, wordLength, onlyUniques, 5);
             sw.Stop();
             TimeSpan timeSpan = sw.Elapsed;
 

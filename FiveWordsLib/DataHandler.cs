@@ -89,7 +89,7 @@ namespace FiveWords
 
             return maskValues.ToArray();
         }
-        public List<List<string>> GetCombinations(string filePath, int wordLength, bool onlyUniques)
+        public List<List<string>> GetCombinations(string filePath, int wordLength, bool onlyUniques, int combinationLength)
         {
             string[] data = GetData(filePath);
             data = KeepWordsWithSpecificLength(data, wordLength);
@@ -97,7 +97,7 @@ namespace FiveWords
             MaskValues[] newData = DataToUint(data, onlyUniques);
 
             List<List<UnmaskedValue>> combinations = new List<List<UnmaskedValue>>();
-            FindCombinations(newData, new List<UnmaskedValue>(), new uint(), ref combinations, 0, 0);
+            FindCombinations(newData, new List<UnmaskedValue>(), new uint(), ref combinations, 0, 0, combinationLength);
             
             List<List<string>> refinedCombinations = new List<List<string>>();
             foreach (List<UnmaskedValue> list in combinations)
@@ -112,10 +112,10 @@ namespace FiveWords
             return refinedCombinations;
         }
 
-        private void FindCombinations(MaskValues[] data, List<UnmaskedValue> combination, uint wordMask, ref List<List<UnmaskedValue>> combinations, int startIndex, int listIndex)
+        private void FindCombinations(MaskValues[] data, List<UnmaskedValue> combination, uint wordMask, ref List<List<UnmaskedValue>> combinations, int startIndex, int listIndex, int combinationLength)
         {
 
-            if (combination.Count == 5)
+            if (combination.Count == combinationLength)
             {
                 //combinations += 1;
                 combinations.Add(combination.ToList());
@@ -138,7 +138,7 @@ namespace FiveWords
                         }
                         //combinationCount += 1;
                         combination.Add(word);
-                        FindCombinations(data, combination, wordMask | word.mask, ref combinations, i, ii + 1);
+                        FindCombinations(data, combination, wordMask | word.mask, ref combinations, i, ii + 1, combinationLength);
                         //combinationCount -= 1;
                         combination.RemoveAt(combination.Count - 1);
                     }

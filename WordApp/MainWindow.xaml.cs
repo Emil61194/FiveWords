@@ -35,7 +35,7 @@ namespace WordApp
                 string filePath = FileLabel.Content?.ToString() ?? "";
                 string wordLength = WordLength.Text;
                 bool onlyUnique = OnlyUnique.IsChecked ?? true;
-                RunResult runResult = await Task.Run(() => executor.Run(filePath, wordLength, onlyUnique));
+                RunResult runResult = await Task.Run(() => executor.Run(filePath, wordLength, onlyUnique, 5));
                 executor.ClearResultsOnScreen(this);
                 executor.SetResultOnScreen(this, runResult);
             }
@@ -71,7 +71,7 @@ namespace WordApp
             {
                 Executor executor = new Executor();
                 executor.ClearResultsOnScreen(this);
-                RunResult runResult = executor.Run(FileLabel.Content?.ToString() ?? "", WordLength.Text, OnlyUnique.IsChecked ?? true);
+                RunResult runResult = executor.Run(FileLabel.Content?.ToString() ?? "", WordLength.Text, OnlyUnique.IsChecked ?? true, 5);
                 executor.SetResultOnScreen(this, runResult);
             }
             catch (Exception ex)
