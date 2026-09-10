@@ -12,16 +12,27 @@ namespace FiveWords
             sw.Start();
 
             DataHandler dh = new DataHandler();
-            //string[] data = dh.GetData("C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_beta.txt");
-            string[] data = dh.GetData("C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_alpha.txt");
+            string[] data = dh.GetData("C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_beta.txt");
+            //string[] data = dh.GetData("C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_alpha.txt");
             data = dh.KeepOnlyFiveLetterWords(data);
             data = dh.FilterRepeatingCharsInSameWord(data);
             MaskValues[] newData = dh.DataToUint(data);
-            dh.GetCombinations(newData);
-
+            List<List<UnmaskedValue>>  combinations = dh.GetCombinations(newData);
             sw.Stop();
             TimeSpan timeSpan = sw.Elapsed;
+
+            foreach(List<UnmaskedValue> list in combinations)
+            {
+                string combination = "";
+                foreach (UnmaskedValue value in list) 
+                {
+                    combination += value.unmask.ToString() + " ";
+                }
+                Console.WriteLine(combination);
+            }
+
             Console.WriteLine(timeSpan.ToString(@"hh\:mm\:ss\:fff"));
+            Console.WriteLine("Total combinations: " + combinations.Count);
         }
     }
 }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace FiveWords
 {
-    public class MaskValues
+    public class UnmaskedValue
     {
         public required uint mask;
-        public required UnmaskedValue[] value;
+        public required string unmask;
     }
 }

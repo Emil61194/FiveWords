@@ -36,20 +36,20 @@ namespace FiveWords
             return results.ToArray();
         }
 
-        public Dictionary<uint, List<uint>> GetDataTemplate()
+        public Dictionary<uint, List<UnmaskedValue>> GetDataTemplate()
         {
-            Dictionary<uint, List<uint>> data = new Dictionary<uint, List<uint>> ();
+            Dictionary<uint, List<UnmaskedValue>> data = new Dictionary<uint, List<UnmaskedValue>> ();
             string supportedLetters = "qwertyuiopasdfghjklzxcvbnm";
             foreach (char c in supportedLetters)
             {
                 uint mask = 0;
-                data.Add(mask |= 1u << (c - 'a'), new List<uint>());
+                data.Add(mask |= 1u << (c - 'a'), new List<UnmaskedValue>());
             }
             return data;
         }
         public MaskValues[] DataToUint(string[] data)
         {
-            Dictionary<uint, List<uint>> convertedData = GetDataTemplate();
+            Dictionary<uint, List<UnmaskedValue>> convertedData = GetDataTemplate();
             HashSet<uint> uniqueMasks = new HashSet<uint>();
 
             foreach (string word in data)
@@ -71,33 +71,33 @@ namespace FiveWords
                 }
                 if (uniqueMasks.Add(mask))
                 {
-                    convertedData[firstLetterMask].Add(mask);
+                    convertedData[firstLetterMask].Add(new UnmaskedValue { mask = mask, unmask = word});
                 }
 
             }
 
             List<MaskValues> maskValues = new List<MaskValues>();
-            foreach(KeyValuePair<uint, List<uint>> kvp in convertedData)
+            foreach(KeyValuePair<uint, List<UnmaskedValue>> kvp in convertedData)
             {
                 maskValues.Add(new MaskValues {mask = kvp.Key, value = kvp.Value.ToArray() });
             }
 
             return maskValues.ToArray();
         }
-        public void GetCombinations(MaskValues[] data)
+        public List<List<UnmaskedValue>> GetCombinations(MaskValues[] data)
         {
-            int combinations = 0;
-            FindCombinations(data, 0, new uint(), ref combinations, 0, 0);
-            Console.WriteLine("Total combinations: " + combinations);
+            List<List<UnmaskedValue>> combinations = new List<List<UnmaskedValue>>();
+            FindCombinations(data, new List<UnmaskedValue>(), new uint(), ref combinations, 0, 0);
+            return combinations;
         }
 
-        private void FindCombinations(MaskValues[] data, int combinationCount, uint wordMask, ref int combinations, int startIndex, int listIndex)
+        private void FindCombinations(MaskValues[] data, List<UnmaskedValue> combination, uint wordMask, ref List<List<UnmaskedValue>> combinations, int startIndex, int listIndex)
         {
 
-            if (combinationCount == 5)
+            if (combination.Count == 5)
             {
-                combinations += 1;
-                Console.WriteLine(combinations);
+                //combinations += 1;
+                combinations.Add(combination.ToList());
                 return;
             }
 
@@ -109,14 +109,16 @@ namespace FiveWords
                     int ii = listIndex;
                     for (; ii < kvp.value.Length; ii++)
                     {
-                        uint word = kvp.value[ii];
-                        if ((word & wordMask) != 0)
+                        UnmaskedValue word = kvp.value[ii];
+                        if ((word.mask & wordMask) != 0)
                         {
                             continue;
                         }
-                        combinationCount += 1;
-                        FindCombinations(data, combinationCount, wordMask | word, ref combinations, i, ii + 1);
-                        combinationCount -= 1;
+                        //combinationCount += 1;
+                        combination.Add(word);
+                        FindCombinations(data, combination, wordMask | word.mask, ref combinations, i, ii + 1);
+                        //combinationCount -= 1;
+                        combination.RemoveAt(combination.Count - 1);
                     }
                 }
                 listIndex = 0;
