@@ -16,7 +16,7 @@ namespace FiveWords
             string[] data = dh.GetData("C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_alpha.txt");
             data = dh.KeepOnlyFiveLetterWords(data);
             data = dh.FilterRepeatingCharsInSameWord(data);
-            Dictionary<uint, uint[]> newData = dh.DataToUint(data);
+            MaskValues[] newData = dh.DataToUint(data);
             dh.GetCombinations(newData);
 
             sw.Stop();

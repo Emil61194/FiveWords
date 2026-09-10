@@ -47,7 +47,7 @@ namespace FiveWords
             }
             return data;
         }
-        public Dictionary<uint, uint[]> DataToUint(string[] data)
+        public MaskValues[] DataToUint(string[] data)
         {
             Dictionary<uint, List<uint>> convertedData = GetDataTemplate();
             HashSet<uint> uniqueMasks = new HashSet<uint>();
@@ -76,22 +76,22 @@ namespace FiveWords
 
             }
 
-            Dictionary<uint, uint[]> result = new Dictionary<uint, uint[]>();
+            List<MaskValues> maskValues = new List<MaskValues>();
             foreach(KeyValuePair<uint, List<uint>> kvp in convertedData)
             {
-                result.Add(kvp.Key, kvp.Value.ToArray());
+                maskValues.Add(new MaskValues {mask = kvp.Key, value = kvp.Value.ToArray() });
             }
 
-            return result;
+            return maskValues.ToArray();
         }
-        public void GetCombinations(Dictionary<uint, uint[]> data)
+        public void GetCombinations(MaskValues[] data)
         {
             int combinations = 0;
-            FindCombinations(data.ToArray(), 0, new uint(), ref combinations, 0, 0);
+            FindCombinations(data, 0, new uint(), ref combinations, 0, 0);
             Console.WriteLine("Total combinations: " + combinations);
         }
 
-        private void FindCombinations(KeyValuePair<uint, uint[]>[] data, int combinationCount, uint wordMask, ref int combinations, int startIndex, int listIndex)
+        private void FindCombinations(MaskValues[] data, int combinationCount, uint wordMask, ref int combinations, int startIndex, int listIndex)
         {
 
             if (combinationCount == 5)
@@ -103,13 +103,13 @@ namespace FiveWords
 
             for (int i = startIndex; i < data.Length; i++)
             {
-                KeyValuePair<uint, uint[]> kvp = data[i];
-                if ((kvp.Key & wordMask) == 0)
+                MaskValues kvp = data[i];
+                if ((kvp.mask & wordMask) == 0)
                 {
                     int ii = listIndex;
-                    for (; ii < kvp.Value.Length; ii++)
+                    for (; ii < kvp.value.Length; ii++)
                     {
-                        uint word = kvp.Value[ii];
+                        uint word = kvp.value[ii];
                         if ((word & wordMask) != 0)
                         {
                             continue;
