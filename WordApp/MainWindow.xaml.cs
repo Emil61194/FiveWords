@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using FiveWords;
+using Microsoft.Win32;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,7 +26,17 @@ namespace WordApp
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            Executor executor = new Executor();
+            executor.Run(FileLabel.Content?.ToString() ?? "", 5, true);
+        }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == true)
+            {
+                FileLabel.Content = ofd.FileName;
+            }
         }
     }
 }
