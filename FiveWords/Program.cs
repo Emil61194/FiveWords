@@ -17,16 +17,16 @@ namespace FiveWords
             data = dh.KeepOnlyFiveLetterWords(data);
             data = dh.FilterRepeatingCharsInSameWord(data);
             MaskValues[] newData = dh.DataToUint(data);
-            List<List<UnmaskedValue>>  combinations = dh.GetCombinations(newData);
+            List<List<string>>  combinations = dh.GetCombinations(newData);
             sw.Stop();
             TimeSpan timeSpan = sw.Elapsed;
 
-            foreach(List<UnmaskedValue> list in combinations)
+            foreach(List<string> list in combinations)
             {
                 string combination = "";
-                foreach (UnmaskedValue value in list) 
+                foreach (string word in list) 
                 {
-                    combination += value.unmask.ToString() + " ";
+                    combination += word + " ";
                 }
                 Console.WriteLine(combination);
             }

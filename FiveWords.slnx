@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="FiveWords/FiveWords.csproj" />
+  <Project Path="FiveWordsLib/FiveWordsLib.csproj" Id="ef13fba2-d33b-433b-85ea-9176bb153711" />
+  <Project Path="WordApp/WordApp.csproj" Id="357af665-6742-4a96-8676-55eba0449b5c" />
 </Solution>

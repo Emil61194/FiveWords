@@ -84,11 +84,22 @@ namespace FiveWords
 
             return maskValues.ToArray();
         }
-        public List<List<UnmaskedValue>> GetCombinations(MaskValues[] data)
+        public List<List<string>> GetCombinations(MaskValues[] data)
         {
             List<List<UnmaskedValue>> combinations = new List<List<UnmaskedValue>>();
             FindCombinations(data, new List<UnmaskedValue>(), new uint(), ref combinations, 0, 0);
-            return combinations;
+            
+            List<List<string>> refinedCombinations = new List<List<string>>();
+            foreach (List<UnmaskedValue> list in combinations)
+            {
+                List<string> combination = new List<string>();
+                foreach (UnmaskedValue value in list)
+                {
+                    combination.Add(value.unmask);
+                }
+                refinedCombinations.Add(combination);
+            }
+            return refinedCombinations;
         }
 
         private void FindCombinations(MaskValues[] data, List<UnmaskedValue> combination, uint wordMask, ref List<List<UnmaskedValue>> combinations, int startIndex, int listIndex)
