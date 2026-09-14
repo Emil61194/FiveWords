@@ -14,8 +14,7 @@ namespace FiveWords
             string filePath = "";
             int wordLength = 5;
             bool onlyUniques = true;
-            //ilePath = "C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_beta.txt";
-            filePath = "C:\\Users\\admin\\source\\repos\\FiveWords\\FiveWords\\words_alpha.txt";
+            filePath = "words_alpha.txt";
 
             DataHandler dh = new DataHandler();           
             List<List<string>>  combinations = dh.GetCombinations(filePath, wordLength, onlyUniques, 5);

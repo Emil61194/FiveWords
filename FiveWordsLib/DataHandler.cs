@@ -14,6 +14,7 @@ namespace FiveWords
         {
             if (!File.Exists(filePath))
             {
+                throw new FileNotFoundException();
                 return new string[0];
             }
 
