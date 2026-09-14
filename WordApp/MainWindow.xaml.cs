@@ -35,8 +35,10 @@ namespace WordApp
                 string filePath = FileLabel.Content?.ToString() ?? "";
                 string wordLength = WordLength.Text;
                 bool onlyUnique = OnlyUnique.IsChecked ?? true;
-                RunResult runResult = await Task.Run(() => executor.Run(filePath, wordLength, onlyUnique, 5));
+
+                IProgress<int> progress = new Progress<int>(value => { ProgressBar.Value = value; });
                 executor.ClearResultsOnScreen(this);
+                RunResult runResult = await Task.Run(() => executor.Run(filePath, wordLength, onlyUnique, 5, progress));
                 executor.SetResultOnScreen(this, runResult);
             }
             catch (Exception ex)
@@ -70,8 +72,14 @@ namespace WordApp
             try
             {
                 Executor executor = new Executor();
+
+                string filePath = FileLabel.Content?.ToString() ?? "";
+                string wordLength = WordLength.Text;
+                bool onlyUnique = OnlyUnique.IsChecked ?? true;
+
+                IProgress<int> progress = new Progress<int>(value => { ProgressBar.Value = value; });
                 executor.ClearResultsOnScreen(this);
-                RunResult runResult = executor.Run(FileLabel.Content?.ToString() ?? "", WordLength.Text, OnlyUnique.IsChecked ?? true, 5);
+                RunResult runResult = executor.Run(filePath, wordLength, onlyUnique, 5, progress);
                 executor.SetResultOnScreen(this, runResult);
             }
             catch (Exception ex)

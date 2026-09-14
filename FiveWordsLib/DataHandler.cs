@@ -10,6 +10,11 @@ namespace FiveWords
 {
     public class DataHandler
     {
+        private IProgress<int>? progress = null;
+        public DataHandler(IProgress<int>? progress = null)
+        {
+            this.progress = progress;
+        }
         private string[] GetData(string filePath)
         {
             if (!File.Exists(filePath))
@@ -95,7 +100,7 @@ namespace FiveWords
             if (combination.Count == combinationLength)
             {
                 combinations.Add(combination.ToList());
-                Console.WriteLine(combinations.Count);
+                //Console.WriteLine(combinations.Count);
                 return;
             }
 
@@ -108,6 +113,12 @@ namespace FiveWords
             for (int i = 0; i < candidates.Length; i++)
             {
                 UnmaskedValue word = candidates[i];
+
+                if (progress != null && combination.Count == 0)
+                {
+                    int percentage = (int)((double)i / candidates.Length * 100);
+                    progress?.Report(percentage);
+                }
 
                 // If word not eligable for combination "continue"
                 if ((word.mask & wordMask) != 0)

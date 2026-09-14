@@ -41,7 +41,7 @@
                 Width="100"
                 HorizontalAlignment="Left"/>
 
-            <ProgressBar Height="25"
+            <ProgressBar x:Name="ProgressBar" Height="25"
                      Margin="0,20,0,0"
                      Visibility="Hidden"/>
 
