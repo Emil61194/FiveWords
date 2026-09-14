@@ -121,6 +121,7 @@ namespace FiveWords
             {
                 UnmaskedValue word = candidates[i];
 
+                // If word not eligable for combination "continue"
                 if ((word.mask & wordMask) != 0)
                 {
                     continue;
@@ -129,6 +130,7 @@ namespace FiveWords
                 uint newMask = wordMask | word.mask;
                 List<UnmaskedValue> remaining = new List<UnmaskedValue>();
 
+                // Shorten list with eligable words before sending to recursive function
                 for (int j = i + 1; j < candidates.Length; j++)
                 {
                     UnmaskedValue nextWord = candidates[j];
