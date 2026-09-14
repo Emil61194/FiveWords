@@ -75,7 +75,7 @@ namespace FiveWords
             UnmaskedValue[] newData = DataToUint(data, onlyUniques);
 
             List<List<UnmaskedValue>> combinations = new List<List<UnmaskedValue>>();
-            FindCombinations(newData, new List<UnmaskedValue>(), 0, ref combinations, 0, combinationLength);
+            FindCombinations(newData, new List<UnmaskedValue>(), 0, ref combinations, combinationLength);
             List<List<string>> refinedCombinations = new List<List<string>>();
 
             foreach (List<UnmaskedValue> list in combinations)
@@ -90,7 +90,7 @@ namespace FiveWords
             return refinedCombinations;
         }
 
-        private void FindCombinations(UnmaskedValue[] candidates, List<UnmaskedValue> combination, uint wordMask, ref List<List<UnmaskedValue>> combinations, int startIndex, int combinationLength)
+        private void FindCombinations(UnmaskedValue[] candidates, List<UnmaskedValue> combination, uint wordMask, ref List<List<UnmaskedValue>> combinations, int combinationLength)
         {
             if (combination.Count == combinationLength)
             {
@@ -100,12 +100,12 @@ namespace FiveWords
             }
 
             int needed = combinationLength - combination.Count;
-            if (candidates.Length - startIndex < needed)
+            if (candidates.Length < needed)
             {
                 return;
             }
 
-            for (int i = startIndex; i < candidates.Length; i++)
+            for (int i = 0; i < candidates.Length; i++)
             {
                 UnmaskedValue word = candidates[i];
 
@@ -136,7 +136,7 @@ namespace FiveWords
                 }
 
                 combination.Add(word);
-                FindCombinations(remaining.ToArray(), combination, newMask, ref combinations, 0, combinationLength);
+                FindCombinations(remaining.ToArray(), combination, newMask, ref combinations, combinationLength);
                 combination.RemoveAt(combination.Count - 1);
             }
         }
