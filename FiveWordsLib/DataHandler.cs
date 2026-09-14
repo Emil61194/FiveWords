@@ -12,7 +12,7 @@ namespace FiveWords
     {
         private string[] GetData(string filePath)
         {
-            if (!File.Exists(filePath)) 
+            if (!File.Exists(filePath))
             {
                 return new string[0];
             }
@@ -43,7 +43,7 @@ namespace FiveWords
 
         private Dictionary<uint, List<UnmaskedValue>> GetDataTemplate()
         {
-            Dictionary<uint, List<UnmaskedValue>> data = new Dictionary<uint, List<UnmaskedValue>> ();
+            Dictionary<uint, List<UnmaskedValue>> data = new Dictionary<uint, List<UnmaskedValue>>();
             string supportedLetters = "qwertyuiopasdfghjklzxcvbnm";
             foreach (char c in supportedLetters)
             {
@@ -52,9 +52,9 @@ namespace FiveWords
             }
             return data;
         }
-        private MaskValues[] DataToUint(string[] data, bool onlyUniques)
+        private UnmaskedValue[] DataToUint(string[] data, bool onlyUniques)
         {
-            Dictionary<uint, List<UnmaskedValue>> convertedData = GetDataTemplate();
+            List<UnmaskedValue> convertedData = new List<UnmaskedValue>();
             HashSet<uint> uniqueMasks = new HashSet<uint>();
 
             foreach (string word in data)
@@ -64,10 +64,6 @@ namespace FiveWords
                 uint firstLetterMask = 0;
                 char firstLetter = word[0];
                 firstLetterMask |= 1u << (firstLetter - 'a');
-                if (!convertedData.ContainsKey(firstLetterMask))
-                {
-                    continue;
-                }
 
                 foreach (char c in word)
                 {
@@ -76,30 +72,24 @@ namespace FiveWords
                 }
                 if (onlyUniques == false || uniqueMasks.Add(mask))
                 {
-                    convertedData[firstLetterMask].Add(new UnmaskedValue { mask = mask, unmask = word});
+                    convertedData.Add(new UnmaskedValue { mask = mask, unmask = word });
                 }
 
             }
 
-            List<MaskValues> maskValues = new List<MaskValues>();
-            foreach(KeyValuePair<uint, List<UnmaskedValue>> kvp in convertedData)
-            {
-                maskValues.Add(new MaskValues {mask = kvp.Key, value = kvp.Value.ToArray() });
-            }
-
-            return maskValues.ToArray();
+            return convertedData.ToArray();
         }
         public List<List<string>> GetCombinations(string filePath, int wordLength, bool onlyUniques, int combinationLength)
         {
             string[] data = GetData(filePath);
             data = KeepWordsWithSpecificLength(data, wordLength);
             data = FilterRepeatingCharsInSameWord(data);
-            MaskValues[] newData = DataToUint(data, onlyUniques);
+            UnmaskedValue[] newData = DataToUint(data, onlyUniques);
 
             List<List<UnmaskedValue>> combinations = new List<List<UnmaskedValue>>();
-            FindCombinations(newData, new List<UnmaskedValue>(), new uint(), ref combinations, 0, 0, combinationLength);
-            
+            FindCombinations(newData, new List<UnmaskedValue>(), 0, ref combinations, 0, combinationLength);
             List<List<string>> refinedCombinations = new List<List<string>>();
+
             foreach (List<UnmaskedValue> list in combinations)
             {
                 List<string> combination = new List<string>();
@@ -112,38 +102,52 @@ namespace FiveWords
             return refinedCombinations;
         }
 
-        private void FindCombinations(MaskValues[] data, List<UnmaskedValue> combination, uint wordMask, ref List<List<UnmaskedValue>> combinations, int startIndex, int listIndex, int combinationLength)
+        private void FindCombinations(UnmaskedValue[] candidates, List<UnmaskedValue> combination, uint wordMask, ref List<List<UnmaskedValue>> combinations, int startIndex, int combinationLength)
         {
-
             if (combination.Count == combinationLength)
             {
-                //combinations += 1;
                 combinations.Add(combination.ToList());
                 Console.WriteLine(combinations.Count);
                 return;
             }
 
-            for (int i = startIndex; i < data.Length; i++)
+            int needed = combinationLength - combination.Count;
+            if (candidates.Length - startIndex < needed)
             {
-                MaskValues kvp = data[i];
-                if ((kvp.mask & wordMask) == 0)
+                return;
+            }
+
+            for (int i = startIndex; i < candidates.Length; i++)
+            {
+                UnmaskedValue word = candidates[i];
+
+                if ((word.mask & wordMask) != 0)
                 {
-                    int ii = listIndex;
-                    for (; ii < kvp.value.Length; ii++)
+                    continue;
+                }
+
+                uint newMask = wordMask | word.mask;
+                List<UnmaskedValue> remaining = new List<UnmaskedValue>();
+
+                for (int j = i + 1; j < candidates.Length; j++)
+                {
+                    UnmaskedValue nextWord = candidates[j];
+
+                    if ((nextWord.mask & newMask) == 0)
                     {
-                        UnmaskedValue word = kvp.value[ii];
-                        if ((word.mask & wordMask) != 0)
-                        {
-                            continue;
-                        }
-                        //combinationCount += 1;
-                        combination.Add(word);
-                        FindCombinations(data, combination, wordMask | word.mask, ref combinations, i, ii + 1, combinationLength);
-                        //combinationCount -= 1;
-                        combination.RemoveAt(combination.Count - 1);
+                        remaining.Add(nextWord);
                     }
                 }
-                listIndex = 0;
+
+                // Check if enough words in list left to finish combination
+                if (remaining.Count < needed - 1)
+                {
+                    continue;
+                }
+
+                combination.Add(word);
+                FindCombinations(remaining.ToArray(), combination, newMask, ref combinations, 0, combinationLength);
+                combination.RemoveAt(combination.Count - 1);
             }
         }
     }
