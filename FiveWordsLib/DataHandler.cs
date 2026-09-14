@@ -41,17 +41,6 @@ namespace FiveWords
             return results.ToArray();
         }
 
-        private Dictionary<uint, List<UnmaskedValue>> GetDataTemplate()
-        {
-            Dictionary<uint, List<UnmaskedValue>> data = new Dictionary<uint, List<UnmaskedValue>>();
-            string supportedLetters = "qwertyuiopasdfghjklzxcvbnm";
-            foreach (char c in supportedLetters)
-            {
-                uint mask = 0;
-                data.Add(mask |= 1u << (c - 'a'), new List<UnmaskedValue>());
-            }
-            return data;
-        }
         private UnmaskedValue[] DataToUint(string[] data, bool onlyUniques)
         {
             List<UnmaskedValue> convertedData = new List<UnmaskedValue>();
@@ -67,7 +56,6 @@ namespace FiveWords
 
                 foreach (char c in word)
                 {
-
                     mask |= 1u << (c - 'a');
                 }
                 if (onlyUniques == false || uniqueMasks.Add(mask))
