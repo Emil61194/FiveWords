@@ -28,6 +28,7 @@ namespace WordApp
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             ThreadRun.IsEnabled = false;
+            NoThreadRun.IsEnabled = false;
             try
             {
                 Executor executor = new Executor();
@@ -48,6 +49,7 @@ namespace WordApp
             finally
             {
                 ThreadRun.IsEnabled = true;
+                NoThreadRun.IsEnabled = true;
             }
         }
 
@@ -68,6 +70,7 @@ namespace WordApp
         }
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
+            ThreadRun.IsEnabled = false;
             NoThreadRun.IsEnabled = false;
             try
             {
@@ -88,6 +91,7 @@ namespace WordApp
             }
             finally
             {
+                ThreadRun.IsEnabled = true;
                 NoThreadRun.IsEnabled = true;
             }
         }
