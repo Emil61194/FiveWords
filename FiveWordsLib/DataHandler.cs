@@ -74,15 +74,17 @@ namespace FiveWords
         }
         public List<List<string>> GetCombinations(string filePath, int wordLength, bool onlyUniques, int combinationLength)
         {
-            string[] data = GetData(filePath);
-            data = KeepWordsWithSpecificLength(data, wordLength);
-            data = FilterRepeatingCharsInSameWord(data);
-            UnmaskedValue[] newData = DataToUint(data, onlyUniques);
-
             List<List<UnmaskedValue>> combinations = new List<List<UnmaskedValue>>();
-            FindCombinations(newData, new List<UnmaskedValue>(), 0, ref combinations, combinationLength);
-            List<List<string>> refinedCombinations = new List<List<string>>();
+            if (wordLength > 0)
+            {
+                string[] data = GetData(filePath);
+                data = KeepWordsWithSpecificLength(data, wordLength);
+                data = FilterRepeatingCharsInSameWord(data);
+                UnmaskedValue[] newData = DataToUint(data, onlyUniques);
+                FindCombinations(newData, new List<UnmaskedValue>(), 0, ref combinations, combinationLength);
+            }
 
+            List<List<string>> refinedCombinations = new List<List<string>>();
             foreach (List<UnmaskedValue> list in combinations)
             {
                 List<string> combination = new List<string>();
